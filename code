@@ -1,0 +1,53 @@
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import requests
+
+# Define your Telegram Bot token
+TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
+
+# Define the command handler for the /start command
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! I am a Bitcoin information bot. Send me a keyword, and I will search for information about it.')
+
+# Define the handler for text messages
+def search(update: Update, context: CallbackContext) -> None:
+    # Get the keyword from the user's message
+    keyword = update.message.text
+
+    # Perform a search using the keyword (you can replace this with any search API or method)
+    search_result = perform_search(keyword)
+
+    # Send the search result back to the user
+    update.message.reply_text(search_result)
+
+# Perform a search (replace this with your actual search logic)
+def perform_search(keyword):
+    # You can use any search API or method here
+    # For example, let's use a simple placeholder URL for demonstration purposes
+    api_url = f'https://example.com/search?query={keyword}'
+    response = requests.get(api_url)
+    
+    if response.status_code == 200:
+        return response.text
+    else:
+        return 'Error fetching search results.'
+
+def main():
+    # Create the Updater and pass it your bot's token
+    updater = Updater(TOKEN)
+
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
+
+    # Register the command handler for the /start command
+    dp.add_handler(CommandHandler("start", start))
+
+    # Register the handler for text messages
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, search))
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until you send a sign
+
+  
